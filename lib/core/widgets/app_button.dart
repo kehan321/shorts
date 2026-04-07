@@ -291,22 +291,21 @@ abstract class AppButton {
     }
 
     if (text != null) {
-      children.add(
-        Flexible(
-          child: Text(
-            text,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
-            style: _buildTextStyle(
-              context,
-              textStyle,
-              fontSize,
-              fontWeight,
-              textColor,
-            ),
-          ),
+      final textWidget = Text(
+        text,
+        overflow: TextOverflow.ellipsis,
+        maxLines: 1,
+        style: _buildTextStyle(
+          context,
+          textStyle,
+          fontSize,
+          fontWeight,
+          textColor,
         ),
       );
+      // Flexible only works inside Row/Column. Text-only buttons use Align internally
+      // (e.g. ElevatedButton), so a lone Flexible would throw ParentData errors.
+      children.add(icon != null ? Flexible(child: textWidget) : textWidget);
     }
 
     if (children.isEmpty) {

@@ -8,9 +8,14 @@ import '/features/video_player/widgets/video_player_view.dart';
 import '/injection_container.dart';
 
 class FeedVideoPostTile extends StatefulWidget {
-  const FeedVideoPostTile({super.key, required this.video});
+  const FeedVideoPostTile({
+    super.key,
+    required this.video,
+    required this.isActive,
+  });
 
   final Video video;
+  final bool isActive;
 
   @override
   State<FeedVideoPostTile> createState() => _FeedVideoPostTileState();
@@ -69,7 +74,9 @@ class _FeedVideoPostTileState extends State<FeedVideoPostTile> {
     }
     return ColoredBox(
       color: context.theme.colorScheme.onSurface,
-      child: SizedBox.expand(child: VideoPlayerView(cubit: _cubit)),
+      child: SizedBox.expand(
+        child: VideoPlayerView(cubit: _cubit, isActive: widget.isActive),
+      ),
     );
   }
 }

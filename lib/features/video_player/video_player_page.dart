@@ -51,6 +51,7 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
                 key: ValueKey(url),
                 videoUrl: url,
                 cubit: cubit,
+                isActive: true,
               );
             },
           );

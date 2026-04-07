@@ -16,10 +16,14 @@ class VideoPlayerContent extends StatefulWidget {
     super.key,
     required this.videoUrl,
     required this.cubit,
+    this.isActive = true,
   });
 
   final String videoUrl;
   final VideoPlayerCubit cubit;
+
+  /// When false (e.g. preloaded adjacent Short), video initializes but stays paused.
+  final bool isActive;
 
   @override
   State<VideoPlayerContent> createState() => _VideoPlayerContentState();
@@ -46,6 +50,10 @@ class _VideoPlayerContentState extends State<VideoPlayerContent> {
     if (oldWidget.videoUrl != widget.videoUrl) {
       _disposeController();
       _initController();
+      return;
+    }
+    if (oldWidget.isActive != widget.isActive) {
+      _syncActivePlayback();
     }
   }
 
@@ -89,11 +97,29 @@ class _VideoPlayerContentState extends State<VideoPlayerContent> {
     }
     setState(() => _controller = c);
     _cubit.setChromeVisible(true);
-    await c.setLooping(false);
-    await c.play();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _scheduleHideChrome();
-    });
+    await c.setLooping(true);
+    if (widget.isActive) {
+      await c.play();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _scheduleHideChrome();
+      });
+    } else {
+      await c.pause();
+      await c.seekTo(Duration.zero);
+    }
+  }
+
+  void _syncActivePlayback() {
+    final c = _controller;
+    if (c == null || !c.value.isInitialized) return;
+    if (widget.isActive) {
+      unawaited(c.play());
+      _cubit.setChromeVisible(true);
+      _scheduleHideChrome();
+    } else {
+      _cancelHideChromeTimer();
+      unawaited(c.pause());
+    }
   }
 
   void _cancelHideChromeTimer() {
@@ -126,14 +152,16 @@ class _VideoPlayerContentState extends State<VideoPlayerContent> {
         _scheduleHideChrome();
       }
     } else {
-      c.play();
+      unawaited(c.play());
       _cubit.setChromeVisible(true);
       _scheduleHideChrome();
     }
   }
 
   void _onCenterPlayPressed() {
-    _controller?.play();
+    final c = _controller;
+    if (c == null || !c.value.isInitialized) return;
+    unawaited(c.play());
     _cubit.setChromeVisible(true);
     _scheduleHideChrome();
   }

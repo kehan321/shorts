@@ -15,16 +15,34 @@ class FeedVideoFeedList extends StatefulWidget {
 
 class _FeedVideoFeedListState extends State<FeedVideoFeedList> {
   late final PageController _pageController;
-  int _currentPage = 0;
+
+  /// Page index that should play (follows scroll position, switches near halfway).
+  int _focusedIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
+    _pageController.addListener(_onPageScroll);
+  }
+
+  void _onPageScroll() {
+    if (!_pageController.hasClients || widget.videos.isEmpty) return;
+    final p = _pageController.page;
+    final n = widget.videos.length;
+    final i = p == null ? 0 : p.round().clamp(0, n - 1);
+    if (i != _focusedIndex) {
+      setState(() => _focusedIndex = i);
+    }
+  }
+
+  bool _mountPlayer(int index) {
+    return (index - _focusedIndex).abs() <= 1;
   }
 
   @override
   void dispose() {
+    _pageController.removeListener(_onPageScroll);
     _pageController.dispose();
     super.dispose();
   }
@@ -44,18 +62,25 @@ class _FeedVideoFeedListState extends State<FeedVideoFeedList> {
         return PageView.builder(
           controller: _pageController,
           scrollDirection: Axis.vertical,
-          allowImplicitScrolling: false,
-          onPageChanged: (i) => setState(() => _currentPage = i),
+          allowImplicitScrolling: true,
+          onPageChanged: (i) {
+            if (i != _focusedIndex) {
+              setState(() => _focusedIndex = i);
+            }
+          },
           itemCount: widget.videos.length,
           itemBuilder: (context, index) {
-            final showPlayer = index == _currentPage;
             final video = widget.videos[index];
+            final mount = _mountPlayer(index);
             return SizedBox(
               height: h,
               width: w,
               child: RepaintBoundary(
-                child: showPlayer
-                    ? FeedVideoPostTile(video: video)
+                child: mount
+                    ? FeedVideoPostTile(
+                        video: video,
+                        isActive: index == _focusedIndex,
+                      )
                     : ColoredBox(color: context.theme.colorScheme.onSurface),
               ),
             );

@@ -7,9 +7,10 @@ import '../video_player_state.dart';
 import 'video_player_content.dart';
 
 class VideoPlayerView extends StatelessWidget {
-  const VideoPlayerView({super.key, required this.cubit});
+  const VideoPlayerView({super.key, required this.cubit, this.isActive = true});
 
   final VideoPlayerCubit cubit;
+  final bool isActive;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +29,7 @@ class VideoPlayerView extends StatelessWidget {
               key: ValueKey(url),
               videoUrl: url,
               cubit: cubit,
+              isActive: isActive,
             );
           },
         );
