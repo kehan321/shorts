@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:video_player_app/core/utils/extensions.dart';
 
 import '/data/models/feed/feed_model.dart';
 import 'feed_video_post_tile.dart';
@@ -55,7 +56,7 @@ class _FeedVideoFeedListState extends State<FeedVideoFeedList> {
               child: RepaintBoundary(
                 child: showPlayer
                     ? FeedVideoPostTile(video: video)
-                    : const ColoredBox(color: Colors.black),
+                    : ColoredBox(color: context.theme.colorScheme.onSurface),
               ),
             );
           },

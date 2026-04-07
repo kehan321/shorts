@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:video_player_app/core/utils/extensions.dart';
 
 import 'shorts_avatar.dart';
 import 'shorts_subscribe_chip.dart';
@@ -18,7 +20,7 @@ class ShortsBottomMeta extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 12, right: 8),
+      padding: EdgeInsets.only(left: 12.w, right: 8.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -28,26 +30,23 @@ class ShortsBottomMeta extends StatelessWidget {
             children: [
               ShortsCircleAvatar(
                 imageUrl: thumbnailUrl,
-                radius: 16,
-                iconSize: 20,
-                borderWidth: 1.5,
+                radius: 16.r,
+                iconSize: 20.r,
+                borderWidth: 1.5.r,
                 borderColor: Colors.white54,
               ),
-              const SizedBox(width: 10),
+              SizedBox(width: 10.w),
               Expanded(
                 child: Text(
                   channelHandle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    height: 1.2,
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    color: context.theme.colorScheme.onPrimary,
                   ),
                 ),
               ),
-              const ShortsSubscribeChip(),
+              ShortsSubscribeChip(),
             ],
           ),
           const SizedBox(height: 8),
@@ -55,16 +54,10 @@ class ShortsBottomMeta extends StatelessWidget {
             caption,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.95),
-              fontSize: 14,
-              height: 1.25,
-              shadows: [
-                Shadow(
-                  color: Colors.black.withValues(alpha: 0.9),
-                  blurRadius: 8,
-                ),
-              ],
+            style: context.textTheme.bodyMedium?.copyWith(
+              color: context.theme.colorScheme.onPrimary.withValues(
+                alpha: 0.95,
+              ),
             ),
           ),
         ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:video_player_app/core/utils/extensions.dart';
 
 import '/core/constants/status_switcher.dart';
 import 'video_player_cubit.dart';
@@ -33,15 +34,16 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       body: BlocBuilder(
         bloc: cubit,
         builder: (context, state) {
           state as VideoPlayerState;
           return StatusSwitcher(
             response: state.response,
-            onLoading: (ctx) => const Center(
-              child: CircularProgressIndicator(color: Colors.white),
+            onLoading: (ctx) => Center(
+              child: CircularProgressIndicator(
+                color: context.theme.colorScheme.onPrimary,
+              ),
             ),
             onCompleted: (ctx, data) {
               final url = cubit.resolvePlaybackUrl(data);

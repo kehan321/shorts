@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:video_player_app/core/utils/extensions.dart';
 
 class RoundDarkIconButton extends StatelessWidget {
   const RoundDarkIconButton({
@@ -21,9 +23,13 @@ class RoundDarkIconButton extends StatelessWidget {
       child: InkWell(
         onTap: onPressed,
         child: SizedBox(
-          width: 44,
-          height: 44,
-          child: Icon(icon, color: Colors.white, size: iconSize),
+          width: 44.r,
+          height: 44.r,
+          child: Icon(
+            icon,
+            color: context.theme.colorScheme.onPrimary,
+            size: iconSize.r,
+          ),
         ),
       ),
     );

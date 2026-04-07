@@ -60,15 +60,12 @@ class ShortsChromeLayer extends StatelessWidget {
               child: SafeArea(
                 bottom: false,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 2,
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
                   child: Row(
                     children: [
                       RoundDarkIconButton(
                         icon: Icons.keyboard_arrow_down_rounded,
-                        iconSize: 30,
+                        iconSize: 30.r,
                         onPressed: () => Navigator.maybePop(context),
                       ),
                     ],

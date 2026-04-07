@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:video_player_app/core/utils/extensions.dart';
 
 import 'shorts_channel_avatar.dart';
 
@@ -37,7 +39,9 @@ class _ShortsActionRailState extends State<ShortsActionRail> {
       children: [
         _railButton(
           icon: _liked ? Icons.thumb_up_rounded : Icons.thumb_up_alt_outlined,
-          iconColor: _liked ? const Color(0xFFFF0000) : Colors.white,
+          iconColor: _liked
+              ? context.theme.colorScheme.primary
+              : context.theme.colorScheme.onPrimary,
           label: '12K',
           onTap: _like,
         ),
@@ -45,12 +49,22 @@ class _ShortsActionRailState extends State<ShortsActionRail> {
           icon: _disliked
               ? Icons.thumb_down_rounded
               : Icons.thumb_down_alt_outlined,
-          iconColor: Colors.white,
+          iconColor: context.theme.colorScheme.onPrimary,
           label: 'Dislike',
           onTap: _dislike,
         ),
-        _railButton(icon: Icons.comment_rounded, label: '234', onTap: () {}),
-        _railButton(icon: Icons.share_rounded, label: 'Share', onTap: () {}),
+        _railButton(
+          icon: Icons.comment_rounded,
+          iconColor: context.theme.colorScheme.onPrimary,
+          label: '234',
+          onTap: () {},
+        ),
+        _railButton(
+          icon: Icons.share_rounded,
+          iconColor: context.theme.colorScheme.onPrimary,
+          label: 'Share',
+          onTap: () {},
+        ),
         const SizedBox(height: 8),
         ShortsChannelAvatar(thumbnailUrl: widget.thumbnailUrl),
       ],
@@ -61,28 +75,29 @@ class _ShortsActionRailState extends State<ShortsActionRail> {
     required IconData icon,
     required String label,
     required VoidCallback onTap,
-    Color iconColor = Colors.white,
+    Color? iconColor,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: EdgeInsets.only(bottom: 16.h),
       child: GestureDetector(
         onTap: onTap,
         behavior: HitTestBehavior.opaque,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: iconColor, size: 32),
-            const SizedBox(height: 4),
+            Icon(icon, color: iconColor, size: 32.r),
+            SizedBox(height: 4.h),
             Text(
               label,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
+              style: context.textTheme.bodySmall?.copyWith(
+                color: context.theme.colorScheme.onPrimary,
+
                 shadows: [
                   Shadow(
-                    color: Colors.black.withValues(alpha: 0.85),
-                    blurRadius: 6,
+                    color: context.theme.colorScheme.onSurface.withValues(
+                      alpha: 0.85,
+                    ),
+                    blurRadius: 6.r,
                   ),
                 ],
               ),

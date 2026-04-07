@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ShortsCircleAvatar extends StatelessWidget {
   const ShortsCircleAvatar({
@@ -20,8 +21,8 @@ class ShortsCircleAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final d = radius * 2;
     return Container(
-      width: d,
-      height: d,
+      width: d.r,
+      height: d.r,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(color: borderColor, width: borderWidth),

@@ -49,9 +49,7 @@ class _FeedScreenPageState extends State<FeedScreenPage> {
                           const Center(child: Text("Loading...")),
                       onRetry: () => cubit.feedScreen(),
                       onCompleted: (context, feed) {
-                        return FeedVideoFeedList(
-                          videos: feed.playableVideos,
-                        );
+                        return FeedVideoFeedList(videos: feed.playableVideos);
                       },
                     );
                   },

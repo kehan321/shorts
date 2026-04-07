@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:video_player_app/core/utils/extensions.dart';
 
 import '/data/models/feed/feed_model.dart';
 import '/features/video_player/video_player_cubit.dart';
@@ -57,15 +58,17 @@ class _FeedVideoPostTileState extends State<FeedVideoPostTile> {
   Widget build(BuildContext context) {
     final url = widget.video.playbackUrl;
     if (url == null || url.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           'No playable stream',
-          style: TextStyle(color: Colors.white54),
+          style: context.textTheme.bodyMedium?.copyWith(
+            color: context.theme.colorScheme.onPrimary.withValues(alpha: 0.54),
+          ),
         ),
       );
     }
     return ColoredBox(
-      color: Colors.black,
+      color: context.theme.colorScheme.onSurface,
       child: SizedBox.expand(child: VideoPlayerView(cubit: _cubit)),
     );
   }

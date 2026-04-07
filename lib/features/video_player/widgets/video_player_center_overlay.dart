@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:video_player/video_player.dart';
+import 'package:video_player_app/core/utils/extensions.dart';
 
 class VideoPlayerCenterOverlay extends StatelessWidget {
   const VideoPlayerCenterOverlay({
@@ -26,8 +28,10 @@ class VideoPlayerCenterOverlay extends StatelessWidget {
             child: Center(
               child: Icon(
                 Icons.pause_rounded,
-                color: Colors.white.withValues(alpha: 0.88),
-                size: 64,
+                color: context.theme.colorScheme.onPrimary.withValues(
+                  alpha: 0.88,
+                ),
+                size: 64.r,
               ),
             ),
           );
@@ -37,20 +41,22 @@ class VideoPlayerCenterOverlay extends StatelessWidget {
             onTap: onPlayPressed,
             behavior: HitTestBehavior.opaque,
             child: Container(
-              width: 86,
-              height: 86,
+              width: 86.r,
+              height: 86.r,
               decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.4),
+                color: context.theme.colorScheme.onSurface.withValues(
+                  alpha: 0.4,
+                ),
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: Colors.white.withValues(alpha: 0.95),
-                  width: 2.5,
+                  width: 2.5.r,
                 ),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.play_arrow_rounded,
                 color: Colors.white,
-                size: 54,
+                size: 54.r,
               ),
             ),
           ),

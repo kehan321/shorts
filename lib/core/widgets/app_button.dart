@@ -7,7 +7,7 @@ import '/core/utils/extensions.dart';
 abstract class AppButton {
   // Default values
   static const double _defaultHeight = 50.0;
-  static const double _defaultRadius = 100.0;
+  static const double _defaultRadius = 25.0;
   static const double _defaultBorderWidth = 1.0;
   static const EdgeInsets _defaultPadding = EdgeInsets.symmetric(
     horizontal: 16.0,
