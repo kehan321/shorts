@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:video_player_app/core/utils/extensions.dart';
+import 'package:shorts/core/utils/extensions.dart';
 
 import '/core/constants/status_switcher.dart';
 import 'video_player_cubit.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:video_player_app/features/video_player/widgets/round_dark_icon.dart';
+import 'package:shorts/features/video_player/widgets/round_dark_icon.dart';
 
 import '../video_player_initial_params.dart';
 import 'shorts_action_rail.dart';

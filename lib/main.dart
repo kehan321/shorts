@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:video_player_app/features/feed_screen/feed_screen_cubit.dart';
-import 'package:video_player_app/features/feed_screen/feed_screen_initial_params.dart';
-import 'package:video_player_app/features/feed_screen/feed_screen_page.dart';
+import 'package:shorts/features/feed_screen/feed_screen_cubit.dart';
+import 'package:shorts/features/feed_screen/feed_screen_initial_params.dart';
+import 'package:shorts/features/feed_screen/feed_screen_page.dart';
 
 import '/config/theme/theme_data.dart';
 import '/core/constants/global.dart';
@@ -42,6 +42,7 @@ class MyApp extends StatelessWidget {
       builder: (context, state) {
         state as bool;
         return MaterialApp(
+          title: 'shorts',
           // useInheritedMediaQuery: true,
           locale: DevicePreview.locale(context),
           builder: DevicePreview.appBuilder,

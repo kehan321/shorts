@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:video_player/video_player.dart';
-import 'package:video_player_app/core/utils/extensions.dart';
+import 'package:shorts/core/utils/extensions.dart';
 
 class ShortsThinProgress extends StatelessWidget {
   const ShortsThinProgress({super.key, required this.controller});

@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:video_player_app/core/utils/app_url.dart';
-import 'package:video_player_app/data/models/feed/feed_model.dart';
-import 'package:video_player_app/domain/repositories/network/network_base_api_service.dart';
+import 'package:shorts/core/utils/app_url.dart';
+import 'package:shorts/data/models/feed/feed_model.dart';
+import 'package:shorts/domain/repositories/network/network_base_api_service.dart';
 
 import '/config/response/api_response.dart';
 import 'feed_screen_initial_params.dart';
