@@ -1,0 +1,87 @@
+import 'package:device_preview/device_preview.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:video_player_app/features/feed_screen/feed_screen_cubit.dart';
+import 'package:video_player_app/features/feed_screen/feed_screen_initial_params.dart';
+import 'package:video_player_app/features/feed_screen/feed_screen_page.dart';
+
+import '/config/theme/theme_data.dart';
+import '/core/constants/global.dart';
+import '/core/show/checker_navigator_observer.dart';
+import '/data/datasources/theme/theme_data_source.dart';
+import '/injection_container.dart' as di;
+import '/injection_container.dart';
+
+void main() async {
+  //  setCustomSystemUIOverlayStyle();
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
+  await di.init();
+  runApp(
+    DevicePreview(
+      enabled: false,
+      builder: (context) {
+        return const MyApp();
+      },
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) => ScreenUtilInit(
+    designSize: const Size(430, 932),
+    minTextAdapt: true,
+    splitScreenMode: true,
+    builder: (_, child) => BlocBuilder(
+      bloc: getIt<ThemeDataSources>(),
+      builder: (context, state) {
+        state as bool;
+        return MaterialApp(
+          // useInheritedMediaQuery: true,
+          locale: DevicePreview.locale(context),
+          builder: DevicePreview.appBuilder,
+          navigatorKey: GlobalConstants.navigatorKey,
+          scaffoldMessengerKey: GlobalConstants.scaffoldMessengerKey,
+          navigatorObservers: [CheckerNavigatorObserver()],
+          debugShowCheckedModeBanner: false,
+          theme: theme,
+          // theme: state ? darkTheme : lightTheme,
+          // scaffoldMessengerKey: scaffoldMessengerKey,
+          // home: VideoPlayerPage(cubit: getIt(param1: const VideoPlayerInitialParams()))
+
+          // home: SplashPage(cubit: getIt(param1: const SplashInitialParams()))
+
+          // );
+          home: const _FeedScreenHost(),
+        );
+      },
+    ),
+  );
+}
+
+class _FeedScreenHost extends StatefulWidget {
+  const _FeedScreenHost();
+
+  @override
+  State<_FeedScreenHost> createState() => _FeedScreenHostState();
+}
+
+class _FeedScreenHostState extends State<_FeedScreenHost> {
+  late final FeedScreenCubit _cubit = getIt(param1: FeedScreenInitialParams());
+
+  @override
+  void dispose() {
+    _cubit.close();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FeedScreenPage(cubit: _cubit);
+  }
+}

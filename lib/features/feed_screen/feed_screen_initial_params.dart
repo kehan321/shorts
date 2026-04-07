@@ -1,0 +1,3 @@
+class FeedScreenInitialParams {
+const FeedScreenInitialParams();
+}
