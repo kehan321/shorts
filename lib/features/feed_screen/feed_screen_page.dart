@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:video_player_app/data/models/feed/feed_model.dart';
 
 import '/core/constants/status_switcher.dart';
-import '/data/models/feed/feed_model.dart';
 import 'feed_screen_cubit.dart';
 import 'feed_screen_state.dart';
 import 'widgets/feed_video_feed_list.dart';
@@ -49,7 +49,9 @@ class _FeedScreenPageState extends State<FeedScreenPage> {
                           const Center(child: Text("Loading...")),
                       onRetry: () => cubit.feedScreen(),
                       onCompleted: (context, feed) {
-                        return FeedVideoFeedList(urls: feed.playbackUrls);
+                        return FeedVideoFeedList(
+                          videos: feed.playableVideos,
+                        );
                       },
                     );
                   },

@@ -3,13 +3,14 @@ class VideoPlayerInitialParams {
     this.videoUrl,
     this.channelHandle,
     this.caption,
+    this.thumbnailUrl,
   });
 
   final String? videoUrl;
 
-  /// Shown bottom-left like Shorts (e.g. `@creator`).
   final String? channelHandle;
 
-  /// Short caption under the channel row.
   final String? caption;
+
+  final String? thumbnailUrl;
 }

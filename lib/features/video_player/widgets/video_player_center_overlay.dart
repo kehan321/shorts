@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
-/// YouTube Shorts–style center play (ring + play) when paused; soft pause when
-/// playing with chrome; nothing when playing and chrome hidden.
 class VideoPlayerCenterOverlay extends StatelessWidget {
   const VideoPlayerCenterOverlay({
     super.key,

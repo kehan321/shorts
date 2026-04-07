@@ -6,9 +6,10 @@ import 'package:video_player/video_player.dart';
 
 import '../video_player_cubit.dart';
 import '../video_player_state.dart';
+import 'short_chrome_layer.dart';
+import 'short_thin_progress.dart';
 import 'video_player_center_overlay.dart';
 import 'video_player_constants.dart';
-import 'video_player_shorts_ui.dart';
 
 class VideoPlayerContent extends StatefulWidget {
   const VideoPlayerContent({
@@ -157,15 +158,14 @@ class _VideoPlayerContentState extends State<VideoPlayerContent> {
 
     if (controller == null || !controller.value.isInitialized) {
       return const Center(
-        child: CircularProgressIndicator(
-          color: Colors.white,
-        ),
+        child: CircularProgressIndicator(color: Colors.white),
       );
     }
 
-    return BlocBuilder<VideoPlayerCubit, VideoPlayerState>(
+    return BlocBuilder(
       bloc: widget.cubit,
       builder: (context, state) {
+        state as VideoPlayerState;
         final chromeVisible = state.chromeVisible;
         return Stack(
           fit: StackFit.expand,
@@ -191,7 +191,7 @@ class _VideoPlayerContentState extends State<VideoPlayerContent> {
               onPlayPressed: _onCenterPlayPressed,
             ),
             ShortsChromeLayer(
-              visible: chromeVisible,
+              visible: true,
               params: widget.cubit.initialParams,
             ),
             Positioned(

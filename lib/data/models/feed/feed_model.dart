@@ -367,6 +367,45 @@ extension VideoPlaybackX on Video {
 extension FeedModelPlaybackX on FeedModel {
   List<String> get playbackUrls =>
       videos.map((v) => v.playbackUrl).whereType<String>().toList();
+
+  /// Items that have a direct `.mp4` stream for the player.
+  List<Video> get playableVideos =>
+      videos.where((v) => v.playbackUrl != null).toList();
+}
+
+extension VideoShortsDisplayX on Video {
+  /// Creator line (YouTube Shorts–style compact @handle when possible).
+  String get shortsChannelLabel {
+    final n = user?.name.trim() ?? '';
+    if (n.isEmpty) return 'Pexels';
+    final compact = n.replaceAll(RegExp(r'\s+'), '');
+    return compact.length < n.length ? '@$compact' : '@$n';
+  }
+
+  /// Thumb / avatar: Pexels poster frame.
+  String? get shortsThumbnailUrl {
+    final u = image.trim();
+    return u.isEmpty ? null : u;
+  }
+
+  /// Caption: tags when present, else duration · resolution · id.
+  String get shortsCaption {
+    final parts = <String>[];
+    for (final t in tags) {
+      if (t is String && t.isNotEmpty) {
+        parts.add(t.startsWith('#') ? t : '#$t');
+      } else if (t is Map) {
+        final name = t['name'] ?? t['title'];
+        if (name is String && name.isNotEmpty) {
+          parts.add(name.startsWith('#') ? name : '#$name');
+        }
+      }
+    }
+    if (parts.isNotEmpty) {
+      return '${parts.take(6).join(' ')} · ${duration}s';
+    }
+    return '${duration}s · $width×$height · Pexels video #$id';
+  }
 }
 
 /*

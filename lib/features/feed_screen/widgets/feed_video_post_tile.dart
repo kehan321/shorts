@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '/data/models/feed/feed_model.dart';
 import '/features/video_player/video_player_cubit.dart';
 import '/features/video_player/video_player_initial_params.dart';
 import '/features/video_player/widgets/video_player_view.dart';
 import '/injection_container.dart';
 
 class FeedVideoPostTile extends StatefulWidget {
-  const FeedVideoPostTile({super.key, required this.videoUrl});
+  const FeedVideoPostTile({super.key, required this.video});
 
-  final String videoUrl;
+  final Video video;
 
   @override
   State<FeedVideoPostTile> createState() => _FeedVideoPostTileState();
@@ -20,20 +21,28 @@ class _FeedVideoPostTileState extends State<FeedVideoPostTile> {
   @override
   void initState() {
     super.initState();
-    _cubit = getIt<VideoPlayerCubit>(
-      param1: VideoPlayerInitialParams(videoUrl: widget.videoUrl),
-    );
+    _cubit = _createCubit(widget.video);
     _cubit.navigator.context = context;
+  }
+
+  VideoPlayerCubit _createCubit(Video video) {
+    final url = video.playbackUrl ?? '';
+    return getIt<VideoPlayerCubit>(
+      param1: VideoPlayerInitialParams(
+        videoUrl: url.isEmpty ? null : url,
+        channelHandle: video.shortsChannelLabel,
+        caption: video.shortsCaption,
+        thumbnailUrl: video.shortsThumbnailUrl,
+      ),
+    );
   }
 
   @override
   void didUpdateWidget(covariant FeedVideoPostTile oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.videoUrl != widget.videoUrl) {
+    if (oldWidget.video.id != widget.video.id) {
       _cubit.close();
-      _cubit = getIt<VideoPlayerCubit>(
-        param1: VideoPlayerInitialParams(videoUrl: widget.videoUrl),
-      );
+      _cubit = _createCubit(widget.video);
       _cubit.navigator.context = context;
     }
   }
@@ -46,6 +55,15 @@ class _FeedVideoPostTileState extends State<FeedVideoPostTile> {
 
   @override
   Widget build(BuildContext context) {
+    final url = widget.video.playbackUrl;
+    if (url == null || url.isEmpty) {
+      return const Center(
+        child: Text(
+          'No playable stream',
+          style: TextStyle(color: Colors.white54),
+        ),
+      );
+    }
     return ColoredBox(
       color: Colors.black,
       child: SizedBox.expand(child: VideoPlayerView(cubit: _cubit)),

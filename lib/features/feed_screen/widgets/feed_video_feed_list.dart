@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '/data/models/feed/feed_model.dart';
 import 'feed_video_post_tile.dart';
 
 class FeedVideoFeedList extends StatefulWidget {
-  const FeedVideoFeedList({super.key, required this.urls});
+  const FeedVideoFeedList({super.key, required this.videos});
 
-  final List<String> urls;
+  final List<Video> videos;
+
   @override
   State<FeedVideoFeedList> createState() => _FeedVideoFeedListState();
 }
@@ -43,15 +45,16 @@ class _FeedVideoFeedListState extends State<FeedVideoFeedList> {
           scrollDirection: Axis.vertical,
           allowImplicitScrolling: false,
           onPageChanged: (i) => setState(() => _currentPage = i),
-          itemCount: widget.urls.length,
+          itemCount: widget.videos.length,
           itemBuilder: (context, index) {
             final showPlayer = index == _currentPage;
+            final video = widget.videos[index];
             return SizedBox(
               height: h,
               width: w,
               child: RepaintBoundary(
                 child: showPlayer
-                    ? FeedVideoPostTile(videoUrl: widget.urls[index])
+                    ? FeedVideoPostTile(video: video)
                     : const ColoredBox(color: Colors.black),
               ),
             );
