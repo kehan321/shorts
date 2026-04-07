@@ -6,9 +6,9 @@ import 'package:video_player/video_player.dart';
 
 import '../video_player_cubit.dart';
 import '../video_player_state.dart';
-import 'video_player_bottom_chrome.dart';
 import 'video_player_center_overlay.dart';
 import 'video_player_constants.dart';
+import 'video_player_shorts_ui.dart';
 
 class VideoPlayerContent extends StatefulWidget {
   const VideoPlayerContent({
@@ -34,7 +34,6 @@ class _VideoPlayerContentState extends State<VideoPlayerContent> {
   @override
   void initState() {
     super.initState();
-    // Defer decode/platform setup until after first frame (helps feed cold start).
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _initController();
     });
@@ -112,28 +111,6 @@ class _VideoPlayerContentState extends State<VideoPlayerContent> {
     });
   }
 
-  void _deferHideChromeAfterChromePointerUp() {
-    const delays = <int>[50, 120, 120, 120, 120, 120];
-    var i = 0;
-    void step() {
-      if (!mounted) return;
-      if (i >= delays.length) return;
-      final wait = delays[i];
-      i++;
-      Future<void>.delayed(Duration(milliseconds: wait), () {
-        if (!mounted) return;
-        final c = _controller;
-        if (c != null && c.value.isPlaying) {
-          _scheduleHideChrome();
-          return;
-        }
-        step();
-      });
-    }
-
-    step();
-  }
-
   void _onVideoSurfaceTap() {
     final c = _controller;
     if (c == null || !c.value.isInitialized) return;
@@ -149,43 +126,6 @@ class _VideoPlayerContentState extends State<VideoPlayerContent> {
       }
     } else {
       c.play();
-      _cubit.setChromeVisible(true);
-      _scheduleHideChrome();
-    }
-  }
-
-  void _togglePlayFromChrome() {
-    final c = _controller;
-    if (c == null) return;
-    if (c.value.isPlaying) {
-      _cancelHideChromeTimer();
-      c.pause();
-      _cubit.setChromeVisible(true);
-    } else {
-      c.play();
-      _cubit.setChromeVisible(true);
-      _scheduleHideChrome();
-    }
-  }
-
-  void _seekRelative(Duration offset) {
-    final c = _controller;
-    if (c == null || !c.value.isInitialized) return;
-    final wasPlaying = c.value.isPlaying;
-    final totalMs = c.value.duration.inMilliseconds;
-    final nextMs = (c.value.position + offset).inMilliseconds.clamp(0, totalMs);
-    c.seekTo(Duration(milliseconds: nextMs));
-    _cubit.setChromeVisible(true);
-    if (wasPlaying) {
-      _scheduleHideChrome();
-    }
-  }
-
-  Future<void> _setSpeed(double speed) async {
-    final c = _controller;
-    if (c == null) return;
-    await c.setPlaybackSpeed(speed);
-    if (c.value.isPlaying) {
       _cubit.setChromeVisible(true);
       _scheduleHideChrome();
     }
@@ -216,13 +156,16 @@ class _VideoPlayerContentState extends State<VideoPlayerContent> {
     final controller = _controller;
 
     if (controller == null || !controller.value.isInitialized) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+        child: CircularProgressIndicator(
+          color: Colors.white,
+        ),
+      );
     }
 
-    return BlocBuilder(
+    return BlocBuilder<VideoPlayerCubit, VideoPlayerState>(
       bloc: widget.cubit,
       builder: (context, state) {
-        state as VideoPlayerState;
         final chromeVisible = state.chromeVisible;
         return Stack(
           fit: StackFit.expand,
@@ -247,52 +190,17 @@ class _VideoPlayerContentState extends State<VideoPlayerContent> {
               chromeVisible: chromeVisible,
               onPlayPressed: _onCenterPlayPressed,
             ),
+            ShortsChromeLayer(
+              visible: chromeVisible,
+              params: widget.cubit.initialParams,
+            ),
             Positioned(
               left: 0,
               right: 0,
               bottom: 0,
-              child: AnimatedSlide(
-                duration: VideoPlayerConstants.chromeSlideDuration,
-                curve: Curves.easeInOutCubic,
-                offset: chromeVisible ? Offset.zero : const Offset(0, 1),
-                child: IgnorePointer(
-                  ignoring: !chromeVisible,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                        colors: [
-                          Colors.black.withValues(alpha: 0.92),
-                          Colors.black.withValues(alpha: 0.6),
-                          Colors.transparent,
-                        ],
-                        stops: const [0.0, 0.45, 1.0],
-                      ),
-                    ),
-                    child: SafeArea(
-                      top: false,
-                      child: Listener(
-                        behavior: HitTestBehavior.deferToChild,
-                        onPointerDown: (_) => _cancelHideChromeTimer(),
-                        onPointerUp: (_) =>
-                            _deferHideChromeAfterChromePointerUp(),
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(12, 28, 12, 10),
-                          child: VideoPlayerBottomChrome(
-                            controller: controller,
-                            onSeekBack: () =>
-                                _seekRelative(-VideoPlayerConstants.skipStep),
-                            onSeekForward: () =>
-                                _seekRelative(VideoPlayerConstants.skipStep),
-                            onTogglePlay: _togglePlayFromChrome,
-                            onSpeedSelected: _setSpeed,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+              child: SafeArea(
+                top: false,
+                child: ShortsThinProgress(controller: controller),
               ),
             ),
           ],

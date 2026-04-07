@@ -48,9 +48,7 @@ class _FeedVideoPostTileState extends State<FeedVideoPostTile> {
   Widget build(BuildContext context) {
     return ColoredBox(
       color: Colors.black,
-      child: SizedBox.expand(
-        child: VideoPlayerView(cubit: _cubit),
-      ),
+      child: SizedBox.expand(child: VideoPlayerView(cubit: _cubit)),
     );
   }
 }

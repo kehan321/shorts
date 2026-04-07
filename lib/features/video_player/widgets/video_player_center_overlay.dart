@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
+/// YouTube Shorts–style center play (ring + play) when paused; soft pause when
+/// playing with chrome; nothing when playing and chrome hidden.
 class VideoPlayerCenterOverlay extends StatelessWidget {
   const VideoPlayerCenterOverlay({
     super.key,
@@ -25,27 +27,32 @@ class VideoPlayerCenterOverlay extends StatelessWidget {
           return IgnorePointer(
             child: Center(
               child: Icon(
-                Icons.pause_circle_filled_rounded,
-                color: Colors.white.withValues(alpha: 0.4),
+                Icons.pause_rounded,
+                color: Colors.white.withValues(alpha: 0.88),
                 size: 64,
               ),
             ),
           );
         }
         return Center(
-          child: Material(
-            color: Colors.black45,
-            shape: const CircleBorder(),
-            clipBehavior: Clip.antiAlias,
-            child: InkWell(
-              onTap: onPlayPressed,
-              child: const Padding(
-                padding: EdgeInsets.all(20),
-                child: Icon(
-                  Icons.play_arrow_rounded,
-                  color: Colors.white,
-                  size: 56,
+          child: GestureDetector(
+            onTap: onPlayPressed,
+            behavior: HitTestBehavior.opaque,
+            child: Container(
+              width: 86,
+              height: 86,
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.4),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.95),
+                  width: 2.5,
                 ),
+              ),
+              child: const Icon(
+                Icons.play_arrow_rounded,
+                color: Colors.white,
+                size: 54,
               ),
             ),
           ),
