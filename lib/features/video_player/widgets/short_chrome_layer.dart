@@ -11,10 +11,12 @@ class ShortsChromeLayer extends StatelessWidget {
     super.key,
     required this.visible,
     required this.params,
+    this.onLogout,
   });
 
   final bool visible;
   final VideoPlayerInitialParams params;
+  final VoidCallback? onLogout;
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +70,14 @@ class ShortsChromeLayer extends StatelessWidget {
                         iconSize: 30.r,
                         onPressed: () => Navigator.maybePop(context),
                       ),
+                      if (onLogout != null) ...[
+                        SizedBox(width: 8.w),
+                        RoundDarkIconButton(
+                          icon: Icons.logout_rounded,
+                          iconSize: 24.r,
+                          onPressed: onLogout!,
+                        ),
+                      ],
                     ],
                   ),
                 ),

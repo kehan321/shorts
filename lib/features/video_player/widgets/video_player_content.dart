@@ -221,6 +221,7 @@ class _VideoPlayerContentState extends State<VideoPlayerContent> {
             ShortsChromeLayer(
               visible: true,
               params: widget.cubit.initialParams,
+              onLogout: () => _cubit.logout(),
             ),
             Positioned(
               left: 0,

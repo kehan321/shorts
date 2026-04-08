@@ -3,21 +3,27 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 
-import '/data/datasources/auth/login_data_sources.dart';
+import '/data/datasources/auth/user_data_sources.dart';
 import '/domain/failures/network/network_failure.dart';
 import '/domain/repositories/local/local_storage_base_api_service.dart';
 import '/domain/repositories/network/network_base_api_service.dart';
 import 'dio_config.dart';
 
 class DioNetworkRepository implements NetworkBaseApiService {
-  final LoginDataSources _loginDataSources;
+  final UserDataSources _userDataSources;
   final LocalStorageRepository _localStorageRepository;
+  final void Function()? _onSessionCleared;
   late final Dio _dio;
 
-  DioNetworkRepository(this._loginDataSources, this._localStorageRepository) {
+  DioNetworkRepository(
+    this._userDataSources,
+    this._localStorageRepository, {
+    void Function()? onSessionCleared,
+  }) : _onSessionCleared = onSessionCleared {
     _dio = DioConfig.createDio(
-      loginDataSources: _loginDataSources,
+      userDataSources: _userDataSources,
       localStorageRepository: _localStorageRepository,
+      onSessionCleared: _onSessionCleared,
     );
   }
 
@@ -171,6 +177,47 @@ class DioNetworkRepository implements NetworkBaseApiService {
     }
   }
 
+  @override
+  Future<Either<NetworkFailure, Stream<List<int>>>> postStream({
+    required String url,
+    required Map<String, dynamic> body,
+    Map<String, String>? headers,
+    CancelToken? cancelToken,
+  }) async {
+    try {
+      final response = await _dio.post<ResponseBody>(
+        url,
+        data: body,
+        cancelToken: cancelToken,
+        options: Options(
+          headers: headers,
+          contentType: Headers.jsonContentType,
+          responseType: ResponseType.stream,
+        ),
+      );
+      final code = response.statusCode ?? 0;
+      if (code >= 200 && code < 300 && response.data != null) {
+        return right(response.data!.stream);
+      }
+      return left(
+        NetworkFailure(
+          error: 'Stream request failed: $code',
+          type: NetworkFailureType.badResponse,
+          statusCode: response.statusCode,
+        ),
+      );
+    } on DioException catch (e) {
+      return left(_handleDioError(e));
+    } catch (e) {
+      return left(
+        NetworkFailure(
+          error: 'Unexpected error: $e',
+          type: NetworkFailureType.unknown,
+        ),
+      );
+    }
+  }
+
   /// Common method to execute requests and handle errors
   Future<Either<NetworkFailure, T>> _executeRequest<T>(
     Future<Response> Function() request,
@@ -197,6 +244,7 @@ class DioNetworkRepository implements NetworkBaseApiService {
           error: 'Connection timeout. Please check your internet connection.',
           type: NetworkFailureType.connectionTimeout,
           statusCode: error.response?.statusCode,
+          additionalData: error.response?.data,
         );
 
       case DioExceptionType.sendTimeout:
@@ -204,6 +252,7 @@ class DioNetworkRepository implements NetworkBaseApiService {
           error: 'Send timeout. Request took too long to send.',
           type: NetworkFailureType.sendTimeout,
           statusCode: error.response?.statusCode,
+          additionalData: error.response?.data,
         );
 
       case DioExceptionType.receiveTimeout:
@@ -211,6 +260,7 @@ class DioNetworkRepository implements NetworkBaseApiService {
           error: 'Receive timeout. Server took too long to respond.',
           type: NetworkFailureType.receiveTimeout,
           statusCode: error.response?.statusCode,
+          additionalData: error.response?.data,
         );
 
       case DioExceptionType.badResponse:
@@ -220,6 +270,7 @@ class DioNetworkRepository implements NetworkBaseApiService {
         return NetworkFailure(
           error: 'Request was cancelled',
           type: NetworkFailureType.cancelled,
+          additionalData: error.response?.data,
         );
 
       case DioExceptionType.unknown:
@@ -229,6 +280,7 @@ class DioNetworkRepository implements NetworkBaseApiService {
         return NetworkFailure(
           error: 'Network error occurred',
           type: NetworkFailureType.unknown,
+          additionalData: error.response?.data,
         );
     }
   }
@@ -253,60 +305,72 @@ class DioNetworkRepository implements NetworkBaseApiService {
           error: 'Bad request: $errorMessage',
           type: NetworkFailureType.badRequest,
           statusCode: statusCode,
+          additionalData: responseData,
         );
       case 401:
         return NetworkFailure(
-          error: 'Unauthorized access. Please login again.',
+          error: errorMessage != 'Request failed'
+              ? errorMessage
+              : 'Unauthorized access. Please login again.',
           type: NetworkFailureType.unauthorized,
           statusCode: statusCode,
+          additionalData: responseData,
         );
       case 403:
         return NetworkFailure(
           error: 'Access forbidden. You don\'t have permission.',
           type: NetworkFailureType.forbidden,
           statusCode: statusCode,
+          additionalData: responseData,
         );
       case 404:
         return NetworkFailure(
           error: 'Resource not found',
           type: NetworkFailureType.notFound,
           statusCode: statusCode,
+          additionalData: responseData,
         );
       case 422:
         return NetworkFailure(
           error: 'Validation error: $errorMessage',
           type: NetworkFailureType.validationError,
           statusCode: statusCode,
+          additionalData: responseData,
         );
       case 429:
         return NetworkFailure(
           error: 'Too many requests. Please try again later.',
           type: NetworkFailureType.tooManyRequests,
           statusCode: statusCode,
+          additionalData: responseData,
         );
       case 500:
         return NetworkFailure(
           error: 'Internal server error. Please try again later.',
           type: NetworkFailureType.internalServerError,
           statusCode: statusCode,
+          additionalData: responseData,
         );
       case 502:
         return NetworkFailure(
           error: 'Bad gateway. Server is temporarily unavailable.',
           type: NetworkFailureType.badGateway,
           statusCode: statusCode,
+          additionalData: responseData,
         );
       case 503:
         return NetworkFailure(
           error: 'Service unavailable. Please try again later.',
           type: NetworkFailureType.serviceUnavailable,
           statusCode: statusCode,
+          additionalData: responseData,
         );
       default:
         return NetworkFailure(
           error: errorMessage,
           type: NetworkFailureType.badResponse,
           statusCode: statusCode,
+          additionalData: responseData,
         );
     }
   }
@@ -316,6 +380,7 @@ class DioNetworkRepository implements NetworkBaseApiService {
       return NetworkFailure(
         error: 'No internet connection. Please check your network.',
         type: NetworkFailureType.noInternetConnection,
+        additionalData: error.response?.data,
       );
     }
 
@@ -323,6 +388,7 @@ class DioNetworkRepository implements NetworkBaseApiService {
       return NetworkFailure(
         error: 'Invalid response format from server.',
         type: NetworkFailureType.formatError,
+        additionalData: error.response?.data,
       );
     }
 
@@ -330,6 +396,7 @@ class DioNetworkRepository implements NetworkBaseApiService {
       error:
           'Unknown network error: ${error.error?.toString() ?? error.message}',
       type: NetworkFailureType.unknown,
+      additionalData: error.response?.data,
     );
   }
 }

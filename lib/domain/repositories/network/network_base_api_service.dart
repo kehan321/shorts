@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 
@@ -55,6 +57,14 @@ abstract class NetworkBaseApiService {
     Map<String, dynamic>? data,
     Map<String, String>? headers,
     ProgressCallback? onSendProgress,
+    CancelToken? cancelToken,
+  });
+
+  /// POST and return response body as stream (e.g. for SSE). Caller must listen and parse.
+  Future<Either<NetworkFailure, Stream<List<int>>>> postStream({
+    required String url,
+    required Map<String, dynamic> body,
+    Map<String, String>? headers,
     CancelToken? cancelToken,
   });
 }

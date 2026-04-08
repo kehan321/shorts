@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:shorts/features/feed_screen/feed_screen_cubit.dart';
-import 'package:shorts/features/feed_screen/feed_screen_initial_params.dart';
-import 'package:shorts/features/feed_screen/feed_screen_page.dart';
+import 'package:shorts/features/splash/splash_initial_params.dart';
+import 'package:shorts/features/splash/splash_page.dart';
 
 import '/config/theme/theme_data.dart';
 import '/core/constants/global.dart';
@@ -51,38 +50,13 @@ class MyApp extends StatelessWidget {
           navigatorObservers: [CheckerNavigatorObserver()],
           debugShowCheckedModeBanner: false,
           theme: theme,
+
           // theme: state ? darkTheme : lightTheme,
           // scaffoldMessengerKey: scaffoldMessengerKey,
           // home: VideoPlayerPage(cubit: getIt(param1: const VideoPlayerInitialParams()))
-
-          // home: SplashPage(cubit: getIt(param1: const SplashInitialParams()))
-
-          // );
-          home: const _FeedScreenHost(),
+          home: SplashPage(cubit: getIt(param1: const SplashInitialParams())),
         );
       },
     ),
   );
-}
-
-class _FeedScreenHost extends StatefulWidget {
-  const _FeedScreenHost();
-
-  @override
-  State<_FeedScreenHost> createState() => _FeedScreenHostState();
-}
-
-class _FeedScreenHostState extends State<_FeedScreenHost> {
-  late final FeedScreenCubit _cubit = getIt(param1: FeedScreenInitialParams());
-
-  @override
-  void dispose() {
-    _cubit.close();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FeedScreenPage(cubit: _cubit);
-  }
 }

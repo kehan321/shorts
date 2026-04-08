@@ -15,4 +15,6 @@ abstract class AppUrl {
 
   static var videoPlayer = '$_baseUrl/videoPlayer';
   static var feed = 'https://api.pexels.com/videos/popular';
+  // Fetching URLs
+  static const String fetching = 'https://jsonplaceholder.typicode.com/users/';
 }

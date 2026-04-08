@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shorts/core/utils/extensions.dart';
+import 'package:shorts/core/widgets/app_bar.dart';
+import 'package:shorts/data/datasources/auth/user_data_sources.dart';
+import 'package:shorts/data/models/user/user_info_store_model.dart';
 
 import '/core/constants/status_switcher.dart';
 import 'video_player_cubit.dart';
@@ -33,30 +36,50 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocBuilder(
-        bloc: cubit,
-        builder: (context, state) {
-          state as VideoPlayerState;
-          return StatusSwitcher(
-            response: state.response,
-            onLoading: (ctx) => Center(
-              child: CircularProgressIndicator(
-                color: context.theme.colorScheme.onPrimary,
+    return BlocBuilder<UserDataSources, UserInfoStoreModel>(
+      bloc: cubit.userDataSources,
+      builder: (context, session) {
+        final scheme = context.colorScheme;
+        return Scaffold(
+          appBar: CustomAppBar.getAppBar(
+            context: context,
+            showLeading: false,
+            automaticallyImplyLeading: false,
+            title: session.user?.name ?? 'Video',
+            foregroundColor: scheme.onSurface,
+            quickActions: [
+              AppBarAction(
+                icon: Icon(Icons.logout_rounded, color: scheme.primary),
+                tooltip: 'Log out',
+                onPressed: () => cubit.logout(),
               ),
-            ),
-            onCompleted: (ctx, data) {
-              final url = cubit.resolvePlaybackUrl(data);
-              return VideoPlayerContent(
-                key: ValueKey(url),
-                videoUrl: url,
-                cubit: cubit,
-                isActive: true,
+            ],
+          ),
+          body: BlocBuilder(
+            bloc: cubit,
+            builder: (context, state) {
+              state as VideoPlayerState;
+              return StatusSwitcher(
+                response: state.response,
+                onLoading: (ctx) => Center(
+                  child: CircularProgressIndicator(
+                    color: context.theme.colorScheme.onPrimary,
+                  ),
+                ),
+                onCompleted: (ctx, data) {
+                  final url = cubit.resolvePlaybackUrl(data);
+                  return VideoPlayerContent(
+                    key: ValueKey(url),
+                    videoUrl: url,
+                    cubit: cubit,
+                    isActive: true,
+                  );
+                },
               );
             },
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

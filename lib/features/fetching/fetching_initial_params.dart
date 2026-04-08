@@ -1,0 +1,3 @@
+class FetchingInitialParams {
+const FetchingInitialParams();
+}

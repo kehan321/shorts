@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shorts/core/widgets/app_bar.dart';
 import 'package:shorts/data/models/feed/feed_model.dart';
 
 import '/core/constants/status_switcher.dart';
@@ -29,7 +30,6 @@ class _FeedScreenPageState extends State<FeedScreenPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0A0A),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return RefreshIndicator.adaptive(

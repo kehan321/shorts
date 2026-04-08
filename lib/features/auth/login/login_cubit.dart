@@ -1,31 +1,62 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '/data/models/auth/login_model.dart';
-import '/features/video_player/video_player_initial_params.dart';
+import 'package:shorts/domain/repositories/network/network_base_api_service.dart';
+import 'package:shorts/features/feed_screen/feed_screen_initial_params.dart';
+
+import '/core/show/show/show.dart';
+import '/domain/usecases/auth/login/login_use_cases.dart';
 import 'login_initial_params.dart';
 import 'login_navigator.dart';
 import 'login_state.dart';
-import '/domain/usecases/auth/login/login_use_cases.dart';
-import '/core/show/show/show.dart';
 
 class LoginCubit extends Cubit<LoginState> {
   final LoginInitialParams initialParams;
-  final LoginUseCases useCases;
+  final UserUseCases useCases;
+  final NetworkBaseApiService networkRepository;
   final LoginNavigator navigator;
-    final Show show;
+  final Show show;
 
-  LoginCubit(this.initialParams, this.useCases, this.navigator, this.show)
-      : super(LoginState.initial(initialParams: initialParams));
+  LoginCubit(
+    this.initialParams,
+    this.networkRepository,
+    this.useCases,
+    this.navigator,
+    this.show,
+  ) : super(LoginState.initial(initialParams: initialParams));
 
-  void postLogin({required LoginModel body}) {
+  Future<void> postLogin({
+    required String username,
+    required String password,
+  }) async {
     emit(state.copyWith(isLoading: true));
-    useCases.execute(body: body.toJson()).then((value) => value
-            .fold((l) {
-               emit(state.copyWith(isLoading: false));
-              return show.showErrorSnackBar(l.error);
-            },
-                ((r) {
-          emit(state.copyWith(isLoading: false));
-          return navigator.openVideoPlayer(const VideoPlayerInitialParams());
-        })));
+    final login = await networkRepository.post<Map<String, dynamic>>(
+      url: "https://dummyjson.com/auth/login",
+      body: {
+        'username': username.trim(),
+        'password': password,
+        'expiresInMins': 30,
+      },
+    );
+    login.fold(
+      (l) {
+        emit(state.copyWith(isLoading: false));
+        return show.showErrorSnackBar(l.error);
+      },
+      (userData) => useCases
+          .execute(userData: userData)
+          .then(
+            (value) => value.fold(
+              (l) {
+                emit(state.copyWith(isLoading: false));
+                return show.showErrorSnackBar(l.error);
+              },
+              ((r) {
+                emit(state.copyWith(isLoading: false));
+                return navigator.openFeedScreen(
+                  const FeedScreenInitialParams(),
+                );
+              }),
+            ),
+          ),
+    );
   }
 }
