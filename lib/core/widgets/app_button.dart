@@ -7,7 +7,7 @@ import '/core/utils/extensions.dart';
 abstract class AppButton {
   // Default values
   static const double _defaultHeight = 50.0;
-  static const double _defaultRadius = 25.0;
+  static const double _defaultRadius = 12.0;
   static const double _defaultBorderWidth = 1.0;
   static const EdgeInsets _defaultPadding = EdgeInsets.symmetric(
     horizontal: 16.0,
@@ -337,7 +337,7 @@ abstract class AppButton {
           color: textColor,
         ) ??
         TextStyle(
-          fontSize: fontSize?.sp ?? 16.sp,
+          fontSize: fontSize?.sp ?? 4.sp,
           fontWeight: fontWeight ?? FontWeight.w500,
           color: textColor,
         );

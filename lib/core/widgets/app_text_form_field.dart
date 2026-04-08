@@ -4,6 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '/core/utils/extensions.dart';
 
+enum AppTextFieldBorderStyle {
+  outline,
+  underline,
+}
+
 /// Configuration class for AppTextFormField styling and behavior
 class AppTextFieldConfig {
   // Styling
@@ -35,6 +40,7 @@ class AppTextFieldConfig {
   final String obscuringCharacter;
   final bool enableInteractiveSelection;
   final bool cursorOpacityAnimates;
+  final AppTextFieldBorderStyle borderStyle;
 
   const AppTextFieldConfig({
     // Styling defaults
@@ -69,6 +75,7 @@ class AppTextFieldConfig {
     this.obscuringCharacter = '•',
     this.enableInteractiveSelection = true,
     this.cursorOpacityAnimates = true,
+    this.borderStyle = AppTextFieldBorderStyle.outline,
   });
 
   AppTextFieldConfig copyWith({
@@ -94,6 +101,7 @@ class AppTextFieldConfig {
     String? obscuringCharacter,
     bool? enableInteractiveSelection,
     bool? cursorOpacityAnimates,
+    AppTextFieldBorderStyle? borderStyle,
   }) {
     return AppTextFieldConfig(
       borderRadius: borderRadius ?? this.borderRadius,
@@ -122,6 +130,7 @@ class AppTextFieldConfig {
           enableInteractiveSelection ?? this.enableInteractiveSelection,
       cursorOpacityAnimates:
           cursorOpacityAnimates ?? this.cursorOpacityAnimates,
+      borderStyle: borderStyle ?? this.borderStyle,
     );
   }
 }
@@ -318,17 +327,34 @@ class _AppTextFormFieldState extends State<AppTextFormField> {
     );
   }
 
-  OutlineInputBorder _buildBorder(Color color) {
-    return OutlineInputBorder(
-      borderSide: BorderSide(color: color, width: _config.borderWidth.w),
-      borderRadius: BorderRadius.circular(_config.borderRadius.r),
-    );
+  InputBorder _buildBorder(Color color) {
+    switch (_config.borderStyle) {
+      case AppTextFieldBorderStyle.outline:
+        return OutlineInputBorder(
+          borderSide: BorderSide(color: color, width: _config.borderWidth.w),
+          borderRadius: BorderRadius.circular(_config.borderRadius.r),
+        );
+      case AppTextFieldBorderStyle.underline:
+        return UnderlineInputBorder(
+          borderSide: BorderSide(color: color, width: _config.borderWidth),
+        );
+    }
   }
 
   Widget? _buildSuffixIcon() {
     if (widget.type == AppTextFieldType.password) {
+      final iconColor = Theme.of(
+        context,
+      ).colorScheme.onSurface.withValues(alpha: 0.72);
       return IconButton(
-        icon: Icon(_obscureText ? Icons.visibility : Icons.visibility_off),
+        visualDensity: VisualDensity.compact,
+        splashRadius: 22,
+        icon: Icon(
+          _obscureText
+              ? Icons.visibility_outlined
+              : Icons.visibility_off_outlined,
+          color: iconColor,
+        ),
         onPressed: () => setState(() => _obscureText = !_obscureText),
       );
     }

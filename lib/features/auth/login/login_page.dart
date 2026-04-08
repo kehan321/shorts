@@ -49,114 +49,221 @@ class _LoginState extends State<LoginPage> {
     );
   }
 
+  AppTextFieldConfig _youtubeFieldConfig(ColorScheme scheme) {
+    return AppTextFieldConfig(
+      borderStyle: AppTextFieldBorderStyle.underline,
+      borderWidth: 1,
+      borderRadius: 0,
+      filled: false,
+      floatingLabelBehavior: FloatingLabelBehavior.auto,
+      contentPadding: EdgeInsets.only(top: 4.h, bottom: 12.h, right: 4.w),
+      borderColor: scheme.outline.withValues(alpha: 0.42),
+      focusedBorderColor: scheme.onSurface.withValues(alpha: 0.88),
+      errorBorderColor: scheme.error,
+      labelColor: scheme.onSurfaceVariant,
+      hintColor: scheme.onSurfaceVariant.withValues(alpha: 0.55),
+      textColor: scheme.onSurface,
+      cursorColor: scheme.primary,
+      textStyle: AppTextStyles.bodyLarge.copyWith(
+        color: scheme.onSurface,
+        fontWeight: FontWeight.w500,
+      ),
+      labelStyle: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w500),
+      hintStyle: AppTextStyles.bodyMedium.copyWith(
+        color: scheme.onSurfaceVariant.withValues(alpha: 0.45),
+      ),
+      errorStyle: AppTextStyles.bodySmall.copyWith(
+        color: scheme.error,
+        height: 1.3,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final scheme = context.colorScheme;
+    final scheme = context.theme.colorScheme;
     final bottomInset = MediaQuery.paddingOf(context).bottom;
 
     return Scaffold(
-      body: SizedBox(
-        width: double.infinity,
-        height: double.infinity,
-
-        child: SafeArea(
-          child: BlocBuilder(
-            bloc: cubit,
-            builder: (context, state) {
-              state as LoginState;
-              return SingleChildScrollView(
+      backgroundColor: Colors.white54,
+      body: SafeArea(
+        child: BlocBuilder(
+          bloc: cubit,
+          builder: (context, state) {
+            state as LoginState;
+            final fieldCfg = _youtubeFieldConfig(scheme);
+            return Center(
+              child: SingleChildScrollView(
                 padding: EdgeInsets.fromLTRB(
                   24.w,
-                  32.h,
+                  8.h,
                   24.w,
-                  24.h + bottomInset,
+                  28.h + bottomInset,
                 ),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      SizedBox(height: 8.h),
-                      Text(
-                        'Welcome back',
-                        style: AppTextStyles.headlineSmall.copyWith(
-                          color: scheme.onSurface,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      SizedBox(height: 8.h),
-                      Text(
-                        'Sign in to continue. DummyJSON demo: emilys / emilyspass',
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: scheme.onSurfaceVariant,
-                          height: 1.4,
-                        ),
-                      ),
-                      SizedBox(height: 40.h),
-                      AppTextFormField(
-                        controller: _usernameController,
-                        labelText: 'Username',
-                        hintText: 'e.g. emilys',
-                        type: AppTextFieldType.standard,
-                        textInputAction: TextInputAction.next,
-                        autofillHints: const [AutofillHints.username],
-                        validator: (v) {
-                          if (v == null || v.trim().isEmpty) {
-                            return 'Enter your username';
-                          }
-                          return null;
-                        },
-                        onFieldSubmitted: (_) {
-                          _passwordFocus.requestFocus();
-                        },
-                      ),
-                      SizedBox(height: 16.h),
-                      AppTextFormField(
-                        controller: _passwordController,
-                        focusNode: _passwordFocus,
-                        labelText: 'Password',
-                        hintText: '••••••••',
-                        type: AppTextFieldType.password,
-                        textInputAction: TextInputAction.done,
-                        autofillHints: const [AutofillHints.password],
-                        validator: (v) {
-                          if (v == null || v.isEmpty) {
-                            return 'Enter your password';
-                          }
-                          return null;
-                        },
-                        onFieldSubmitted: (_) => _submit(),
-                      ),
-                      SizedBox(height: 32.h),
-                      AppButton.getButton(
-                        context: context,
-                        text: 'Sign in',
-                        loading: state.isLoading,
-                        onPressed: state.isLoading ? null : _submit,
-                        height: 52,
-                        radius: 16,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                        backgroundColor: scheme.primary,
-                        textColor: scheme.onPrimary,
-                      ),
-                      SizedBox(height: 24.h),
-                      Center(
-                        child: Text(
-                          'Shorts',
-                          style: AppTextStyles.titleMedium.copyWith(
-                            color: scheme.primary,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.5,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 400.w),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        SizedBox(height: 12.h),
+                        Center(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 40.w,
+                                height: 28.h,
+                                decoration: BoxDecoration(
+                                  color: scheme.primary,
+                                  borderRadius: BorderRadius.circular(8.r),
+                                ),
+                                child: Center(
+                                  child: Icon(
+                                    Icons.play_arrow_rounded,
+                                    color: scheme.onPrimary,
+                                    size: 22.r,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 10.w),
+                              Text(
+                                'Shorts',
+                                style: AppTextStyles.headlineSmall.copyWith(
+                                  letterSpacing: -0.6,
+                                  fontWeight: FontWeight.w800,
+                                  height: 1,
+                                  color: scheme.onSurface,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                    ],
+                        SizedBox(height: 36.h),
+                        Container(
+                          padding: EdgeInsets.fromLTRB(22.w, 22.h, 22.w, 20.h),
+                          decoration: BoxDecoration(
+                            color: scheme.surface,
+                            borderRadius: BorderRadius.circular(16.r),
+                            border: Border.all(
+                              color: scheme.outline.withValues(alpha: 0.14),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: scheme.shadow.withValues(alpha: 0.06),
+                                blurRadius: 24,
+                                offset: const Offset(0, 8),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Text(
+                                'Sign in',
+                                style: AppTextStyles.titleLarge.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: -0.3,
+                                  color: scheme.onSurface,
+                                ),
+                              ),
+                              SizedBox(height: 4.h),
+                              Text(
+                                'to continue to Shorts',
+                                style: AppTextStyles.bodyMedium.copyWith(
+                                  color: scheme.onSurfaceVariant,
+                                  height: 1.35,
+                                ),
+                              ),
+                              SizedBox(height: 26.h),
+                              AppTextFormField(
+                                controller: _usernameController,
+                                config: fieldCfg,
+                                labelText: 'Email or username',
+                                hintText: 'emilys',
+                                type: AppTextFieldType.standard,
+                                textInputAction: TextInputAction.next,
+                                autofillHints: const [AutofillHints.username],
+                                validator: (v) {
+                                  if (v == null || v.trim().isEmpty) {
+                                    return 'Enter your username';
+                                  }
+                                  return null;
+                                },
+                                onFieldSubmitted: (_) =>
+                                    _passwordFocus.requestFocus(),
+                              ),
+                              SizedBox(height: 20.h),
+                              AppTextFormField(
+                                controller: _passwordController,
+                                focusNode: _passwordFocus,
+                                config: fieldCfg,
+                                labelText: 'Password',
+                                hintText: '',
+                                type: AppTextFieldType.password,
+                                textInputAction: TextInputAction.done,
+                                autofillHints: const [AutofillHints.password],
+                                validator: (v) {
+                                  if (v == null || v.isEmpty) {
+                                    return 'Enter your password';
+                                  }
+                                  return null;
+                                },
+                                onFieldSubmitted: (_) => _submit(),
+                              ),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: TextButton(
+                                  style: TextButton.styleFrom(
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 4.h,
+                                    ),
+                                    visualDensity: VisualDensity.compact,
+                                    foregroundColor: scheme.primary,
+                                  ),
+                                  onPressed: () {},
+                                  child: Text(
+                                    'Forgot password?',
+                                    style: AppTextStyles.labelLarge.copyWith(
+                                      color: scheme.secondary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 8.h),
+                              AppButton.getButton(
+                                context: context,
+                                text: 'Sign in',
+                                loading: state.isLoading,
+                                onPressed: state.isLoading ? null : _submit,
+
+                                elevation: 0,
+                                backgroundColor: scheme.primary,
+                                textColor: scheme.onPrimary,
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 22.h),
+                        Text(
+                          'Demo account: emilys / emilyspass',
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: scheme.onSurfaceVariant.withValues(
+                              alpha: 0.85,
+                            ),
+                            height: 1.35,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
       ),
     );
