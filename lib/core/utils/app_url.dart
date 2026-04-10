@@ -1,8 +1,6 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 abstract class AppUrl {
-  static final _base = dotenv.env['BASE_URL'];
-  // static const _base = 'http://192.168.18.68:3001';
+  // static final _base = dotenv.env['BASE_URL'];
+  static const _base = 'https://dummyjson.com';
   // static const _base = 'http://192.168.100.31:3001';
   static final socketBaseUrl = _base;
   static final _baseUrl = '$_base/api/v1';
@@ -17,4 +15,9 @@ abstract class AppUrl {
   static var feed = 'https://api.pexels.com/videos/popular';
   // Fetching URLs
   static const String fetching = 'https://jsonplaceholder.typicode.com/users/';
+  // Home URLs
+  static const String home = '/home';
+
+  // Product URLs
+  static const String product = '$_base/products';
 }

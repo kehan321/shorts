@@ -16,6 +16,7 @@ class UserDataSources extends Cubit<UserInfoStoreModel> {
   User? get currentUser => state.user;
 
   /// Get user email
+  /// 
   String get userEmail => state.user?.email ?? '';
 
   /// Get user name

@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shorts/features/feed_screen/feed_screen_initial_params.dart';
+import 'package:shorts/features/product/product_initial_params.dart';
 
 import '/domain/usecases/local/check_for_existing_user_use_case.dart';
 import '/domain/usecases/theme/get_theme_use_case.dart';
-import '/features/auth/login/login_initial_params.dart';
 import '/features/splash/splash_navigator.dart';
 import 'splash_initial_params.dart';
 import 'splash_state.dart';
@@ -28,8 +28,10 @@ class SplashCubit extends Cubit<SplashState> {
     checkForExistingUserUseCase.execute().then(
       (value) => value.fold(
         (l) {
+          // emit(state.copyWith(isloading: false));
+          // return navigator.openLogin(const LoginInitialParams());
           emit(state.copyWith(isloading: false));
-          return navigator.openLogin(const LoginInitialParams());
+          return navigator.openProduct(const ProductInitialParams());
         },
         (r) {
           emit(state.copyWith(isloading: false));

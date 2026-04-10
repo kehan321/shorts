@@ -1,0 +1,3 @@
+class ProductInitialParams {
+const ProductInitialParams();
+}

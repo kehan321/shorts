@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ScreenUtilInit(
-    designSize: const Size(430, 932),
+    designSize: const Size(375, 932),
     minTextAdapt: true,
     splitScreenMode: true,
     builder: (_, child) => BlocBuilder(

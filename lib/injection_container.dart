@@ -1,4 +1,18 @@
 /*
+************************ Product ************************
+*/
+import 'features/product/product_cubit.dart';
+import 'features/product/product_navigator.dart';
+import 'features/product/product_initial_params.dart';
+
+/*
+************************ Home ************************
+*/
+import 'features/home/home_cubit.dart';
+import 'features/home/home_navigator.dart';
+import 'features/home/home_initial_params.dart';
+
+/*
 ************************ Fetching ************************
 */
 /*
@@ -19,6 +33,7 @@ import 'data/datasources/theme/theme_data_source.dart';
 import 'data/repositories/local/insecure_local_storage_repository.dart';
 import 'data/repositories/network/dio/dio_network_repository.dart';
 import 'domain/repositories/local/local_storage_base_api_service.dart';
+import 'core/services/payment_service.dart';
 import 'domain/usecases/auth/login/login_use_cases.dart';
 import 'domain/usecases/theme/get_theme_use_case.dart';
 import 'domain/usecases/theme/update_theme_use_case.dart';
@@ -70,6 +85,7 @@ Future<void> init() async {
   );
   //  getIt.registerSingleton<Connectivity>(Connectivity());
   getIt.registerSingleton<Show>(Show());
+  getIt.registerSingleton<PaymentService>(PaymentService());
 
   // getIt.registerSingleton<InternetConnectivityCheckerDataSources>(
   //     InternetConnectivityCheckerDataSources(getIt(), getIt()));
@@ -125,4 +141,28 @@ Future<void> init() async {
   getIt.registerFactoryParam<FetchingCubit, FetchingInitialParams, dynamic>(
     (params, _) => FetchingCubit(params, getIt(), getIt())..fetching(),
   );
+/*
+************************ Home ************************
+*/
+  getIt.registerSingleton<HomeNavigator>(HomeNavigator(getIt()));
+  getIt.registerFactoryParam<HomeCubit, HomeInitialParams, dynamic>(
+      (params, _) => HomeCubit(params, getIt()
+      , getIt()
+      
+      )
+      ..home()
+      );
+
+/*
+************************ Product ************************
+*/
+  getIt.registerSingleton<ProductNavigator>(ProductNavigator(getIt()));
+  getIt.registerFactoryParam<ProductCubit, ProductInitialParams, dynamic>(
+      (params, _) => ProductCubit(params, getIt()
+      , getIt()
+      
+      )
+      ..product()
+      );
+
 }
